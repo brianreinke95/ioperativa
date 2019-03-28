@@ -1,4 +1,4 @@
-# ioperativa
+# Investigación Operativa
 Ejercicios de la materia
 
 # Ejercicio 1:
