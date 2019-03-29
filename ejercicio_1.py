@@ -92,8 +92,3 @@ a, b, c, d = juego()
 df = crear_tabla(a, b, c, d)
 mostrar_promedios(df)
 crear_graficos(df)
-
-
-
-
-
