@@ -1,5 +1,5 @@
 # Investigación Operativa
-Ejercicios de la materia
+## Ejercicios de la materia
 
 # Ejercicio 1:
  En este ejercicio se simuló un juego donde se lanzaba una moneda. Por cada lanzamiento uno debía pagar 1 dólar. El juego acababa 
