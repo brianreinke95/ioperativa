@@ -22,11 +22,6 @@ Consideraciones:
 
 '''
 
-
-def aux():
-    print('hola')
-
-
 a = 0
 N = 0
 x = 1/10  # 0.1 hora = 6 min
@@ -84,7 +79,9 @@ df = pd.DataFrame({
     'Rd': vec_ps,
     '¿Salida en el intervalo?': vec_bool_salida
 })
+df.name = 'Datos Principales:'
 
+print(df.name)
 print(df)
 print()
 
@@ -97,6 +94,7 @@ print('Máximo número de personas en la cola registrado: {}'.format(max_num_en_
 print()
 
 ##################################################################################################
+### Tiempo entre llegadas ###
 
 vector_evento_llegada = df['¿Llegada en el intervalo?'].map({'Si': 1, 'No': 0})
 locl = np.where(vector_evento_llegada == 1)
@@ -142,6 +140,7 @@ print('Mínimo tiempo dentro del sistema registrado: {}'.format(tiempo_en_sist_m
 print()
 
 #############################################################################################
+### Tiempo desperdiciado ###
 
 clientes_en_sistema = 0
 pos3 = []
@@ -210,3 +209,18 @@ duracion_min_servicio = vec_dur_ser_series.min()
 print('Duración promedio del servicio: {} min'.format(duracion_promedio_del_servicio))
 print('Máxima duración del servicio registrada: {} min'.format(duracion_max_servicio))
 print('Mínima duración del servicio registrada: {} min'.format(duracion_min_servicio))
+print()
+
+
+###################################################################################
+
+df_promedios = pd.DataFrame({
+    'Tiempo entre Arribos [min]': tiempo_medio_entre_llegadas,
+    'Tiempo total en el sistema [min]': tiempo_medio_en_sistema,
+    'Duración del servicio [min]': duracion_promedio_del_servicio,
+    'Tiempo sin trabajo [%]': porcentaje_t_desperdiciado
+}, index=['Resultados: '])
+df_promedios.name = 'Promedios:'
+
+print(df_promedios.name)
+print(df_promedios)
