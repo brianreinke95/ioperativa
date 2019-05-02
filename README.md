@@ -9,4 +9,7 @@ en el momento en que la diferencia entre el número de caras obtenido y el núme
 # Ejercicio 2:
  En este ejercicio se simuló un sistema de colas M/M/1. Donde los tiempos entre arribos y los tiempos de salida tenían ambos una distribución exponencial.<br />
  Se toman todos los datos y se calculan tiempos importantes para el caso de estudio.
+ 
+ # Platos y Cerillos:
+   Simulación del juego "platos y cerillos" del libro "La Meta".  En esta simulación se puede observar el efecto "látigo". Este juego también es conocido como **'beer game'**, un juego que demuestra como en una cadena productiva o logística un error aguas arriba te causa un caos aguas abajo. 
 
