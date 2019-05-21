@@ -1,6 +1,10 @@
 # Investigación Operativa
 ## Ejercicios de la materia
 
+# Tp1: Ejercicio de Markov
+ Evolución de clientes en tres marcas diferentes según la matriz de transición y el vector original. 
+ Transición a 3, 5, 7, 9, y 20 meses.
+
 # Ejercicio 1:
  En este ejercicio se simuló un juego donde se lanzaba una moneda. Por cada lanzamiento uno debía pagar 1 dólar. El juego acababa 
 en el momento en que la diferencia entre el número de caras obtenido y el número de secas era igual a '3'.<br />
