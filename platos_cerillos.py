@@ -10,7 +10,7 @@ pd.set_option("display.max_columns", 20)
 pd.set_option('display.width', desired_width)
 pd.set_option('display.colheader_justify', 'left')
 #####################################################################################
-iteraciones = 1000
+iteraciones = 10
 
 platos = [1, 2, 3, 4, 5]
 loop = 0
@@ -29,8 +29,14 @@ while loop < iteraciones:
     flujo = [0] * len(platos)
     cerillos = [0 for i in range(0, len(platos))]
 
+    # a = zip(dados, flujo, cerillos)
+    # for ii, [s, d, f] in enumerate(a):
+    #     d = s+1
+    #     f = s-1
+    #     print(ii, s, d, f)
+    # print(dados, flujo, cerillos)
 
-    for i in range(0, len(platos)):
+    for i in range(len(platos)):
         if i == 0:
             flujo[i] = dados[i]
         else:
@@ -39,12 +45,12 @@ while loop < iteraciones:
 
         cerillos[i] = flujo[i] + cerillos[i]
 
-    dev = [flujo[x] - 3.5 for x in range(0, len(platos))]
+    dev = [flujo[x] - 3.5 for x in range(len(platos))]
 
-    for i in range(0, len(dev)):
+    for i in range(len(dev)):
         puntaje[i] += dev[i]
-    print(dev)
-    print(puntaje)
+    #print(dev)
+    #print(puntaje)
 
     dev_acumulada.append(puntaje.copy())
     entrada = dados[0]
@@ -63,13 +69,20 @@ while loop < iteraciones:
 ###############  Parámetros para definir el Multinivel  ######################
 
 columns = ['Número de dado', 'Flujo', 'Desviacion', 'Estado']  # Primer Nivel
-lon = []
-for x in range(0, len(columns)):
-    z = [x for i in range(0, len(juego_nro))]
-    lon.extend(z)
+nro_columnas = len(columns)
 
+lon = []
+# si 'lon' = [0, 0, 0, 1, 1, 1] entonces columns = [A, B]  A corresponde a los 3 primeros, B a los 3 segundos.
+# en este caso juego = [0, 1, 2] se reparte de 3 en 3, por lo tanto corresponde repetir de a 3.
+# si tuviese [A, B, C] debo tener [0, 0, 0, 1, 1, 1, 2, 2, 2]
+# si tuviese juego = [0, 1, 2, 3] debo tener [0, 0, 0, 0, 1, 1, 1, 1] etc...
+
+for x in range(nro_columnas):
+    z = [x for i in range(iteraciones)]
+    lon.extend(z)
 aux = []
-z = [juego_nro for i in range(0, len(columns))]
+# juego_nro = [0, 1, 2] copio este valor i veces correspondondiente al nro de columnas (4)
+z = [juego_nro for i in range(nro_columnas)]
 for item in z:
     aux.extend(item)
 
@@ -93,12 +106,12 @@ df2 = pd.DataFrame(A, columns=midx)
 df2.index.names = ['Plato']
 df_por_plato = df2.stack(level=0)
 
-print(df_por_plato)
+#print(df_por_plato)
 
 
 log_df = pd.DataFrame(dev_acumulada, columns=['plato %i' % (x + 1) for x in range(0, len(platos))])
-print(log_df)
-plt.plot(log_df)
-plt.show()
+#print(log_df)
+#plt.plot(log_df)
+#plt.show()
 
-print(log_df.mean())
+#print(log_df.mean())

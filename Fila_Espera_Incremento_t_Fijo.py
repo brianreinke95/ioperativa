@@ -25,17 +25,26 @@ Consideraciones:
 a = 0
 N = 0
 x = 1/10  # 0.1 hora = 6 min
-landa = 3
-mu = 5
+landa = 3  # Por hora
+mu = 5     # Por hora
+t_salida = 1/mu
 
-# Los tiempos transcurridos entre dos sucesos sucesivos de parámetro lambda*t siguen la distribución exponencial.
-# Función de distribución exponencial acumulada:
-pl = 1-exp(-landa * x)
-ps = 1-exp(-mu * x)
 
 t = 0
-ts = 0.1*60  # 6 min
-tiempo_total = ts*40
+ts = x*60  # 6 min
+iteraciones = 1000
+tiempo_total = ts*iteraciones
+
+mu_min = mu/60
+landa_min = landa/60
+### Calculado:
+Ws = round(1/(mu_min-landa_min))
+Wq = landa_min/(mu_min*(mu_min-landa_min))
+Lq = round(landa_min*Wq)
+L = Lq + landa_min/mu_min
+Ts = 1/mu_min
+Tl = 1/landa_min
+
 
 vec_tiempo = []
 vec_N = []
@@ -43,6 +52,11 @@ vec_pl = []
 vec_bool_llegada = []
 vec_ps = []
 vec_bool_salida = []
+
+# Los tiempos transcurridos entre dos sucesos sucesivos de parámetro lambda*t siguen la distribución exponencial.
+# Función de distribución exponencial acumulada:
+pl = 1-exp(-landa * x)
+ps = 1-exp(-mu * x)
 
 
 while t < tiempo_total:
@@ -86,11 +100,12 @@ print(df)
 print()
 
 #################################################################################################
+### Estado del Sistema:
+max_mean = df['N(t)'].agg(['max', 'mean']).tolist()
 
-max_num_en_cola = int(df.agg({
-    'N(t)': 'max'
-}).get_values())
-print('Máximo número de personas en la cola registrado: {}'.format(max_num_en_cola))
+print('Máximo número de personas en la cola registrado: {}'.format(max_mean[0]))
+print('Promedio de personas en la cola: {}'.format(max_mean[1]))
+print('Largo de la cola L esperado: {}'.format(L))
 print()
 
 ##################################################################################################
@@ -111,6 +126,7 @@ tiempo_min_entre_llegadas = tiempo_entre_llegadas.min()
 print('Tiempo promedio entre llegadas: {}'.format(tiempo_medio_entre_llegadas) + ' min')
 print('Máximo tiempo entre llegadas registrado: {}'.format(tiempo_max_entre_llegadas) + ' min')
 print('Mínimo tiempo entre llegadas registrado: {}'.format(tiempo_min_entre_llegadas) + ' min')
+print('Tiempo esperado entre llegadas 1/landa: {} min'.format(Tl))
 print()
 
 ###################################################################################################
@@ -137,8 +153,9 @@ tiempo_en_sist_min = tsist_series.min()
 print('Tiempo promedio en el sistema: {}'.format(tiempo_medio_en_sistema) + ' min')
 print('Máximo tiempo dentro del sistema registrado: {}'.format(tiempo_en_sist_max) + ' min')
 print('Mínimo tiempo dentro del sistema registrado: {}'.format(tiempo_en_sist_min) + ' min')
+##############
+print('Tiempo de espera esperado Ws en el sistema: {} min'.format(Ws))
 print()
-
 #############################################################################################
 ### Tiempo desperdiciado ###
 
@@ -159,13 +176,6 @@ print()
 
 #############################################################################################
 ### Tiempo de duración del servicio ###
-#
-# print('Entrada: ', vector_evento_llegada.tolist())
-# print('Salida:  ', vector_evento_terminacion_servicio.tolist())
-# print('N:       ', df['N(t)'].tolist())
-# print('Flujo:   ', flujo_clientes_en_sistema.tolist())
-# print('Pos servicio +1: ', locs)
-# print('Pos llegada +1:  ', locl)
 
 # Si N=1 y flujo=1 es porque antes N=0 es decir me quedo sin clientes para atender -> El siguiente to es esta iteracion
 # vec_eve_term_serv[+1] = to -> cuando
@@ -200,7 +210,7 @@ vec_to = df['tiempo(min)'][to]
 
 vector_duracion_servicio = []
 for i in range(len(to)):
-    vector_duracion_servicio.append(vec_tf.iloc[i] - vec_to.iloc[i] + 6) # incluyo los 6min donde termina.
+    vector_duracion_servicio.append(vec_tf.iloc[i] - vec_to.iloc[i])
 vec_dur_ser_series = pd.Series(vector_duracion_servicio)
 duracion_promedio_del_servicio = round(vec_dur_ser_series.mean())
 duracion_max_servicio = vec_dur_ser_series.max()
@@ -209,6 +219,7 @@ duracion_min_servicio = vec_dur_ser_series.min()
 print('Duración promedio del servicio: {} min'.format(duracion_promedio_del_servicio))
 print('Máxima duración del servicio registrada: {} min'.format(duracion_max_servicio))
 print('Mínima duración del servicio registrada: {} min'.format(duracion_min_servicio))
+print('Tiempo estimado de servicio 1/mu: {} min'.format(Ts))
 print()
 
 
@@ -222,5 +233,18 @@ df_promedios = pd.DataFrame({
 }, index=['Resultados: '])
 df_promedios.name = 'Promedios:'
 
-print(df_promedios.name)
-print(df_promedios)
+# print(df_promedios.name)
+# print(df_promedios)
+print()
+
+
+df3 = pd.DataFrame(np.array([[tiempo_medio_entre_llegadas, duracion_promedio_del_servicio,
+           max_mean[1], tiempo_medio_en_sistema],
+          [Tl, Ts, Lq, Ws]]).transpose(), index=['Tl', 'Ts', 'Nro_fila', 'T_sis'], columns=['Simulado', 'Calculado'])
+df4 = df3.apply(np.diff, axis=1)
+df4 = df4.apply(np.round)
+
+df5 = pd.concat([df3, df4], axis=1)
+df5.rename(columns={0: 'Diferencia'}, inplace=True)
+
+print(df5)
